@@ -1,0 +1,2172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>r-agent.com サイトリニューアル企画書</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #c8102e;
+    --red-light: #fdf0f2;
+    --navy: #1a1a2e;
+    --navy-light: #2d2d4a;
+    --gray-100: #f8f8f8;
+    --gray-200: #efefef;
+    --gray-300: #e0e0e0;
+    --gray-500: #888;
+    --gray-700: #444;
+    --text: #1a1a1a;
+    --white: #ffffff;
+    --green: #0a7c42;
+    --green-light: #f0faf5;
+    --orange: #e67e22;
+    --orange-light: #fdf6ee;
+    --blue: #1a6bbd;
+    --blue-light: #f0f5fd;
+    --purple: #7b3fa0;
+    --purple-light: #f5f0fa;
+    --cms-color: #0a7c42;
+    --new-color: #c8102e;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 52px; /* sticky nav height */
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ====== HEADER ====== */
+  .doc-header {
+    background: var(--navy);
+    color: white;
+    padding: 40px 60px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .doc-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--red);
+  }
+  .doc-header .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 10px;
+  }
+  .doc-header h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    margin-bottom: 12px;
+  }
+  .doc-header .meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* ====== NAV ====== */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-300);
+    padding: 0 60px;
+  }
+  .nav-inner {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-link {
+    display: block;
+    padding: 14px 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-500);
+    text-decoration: none;
+    white-space: nowrap;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .nav-link:hover { color: var(--navy); }
+  .nav-link.active { color: var(--navy); border-bottom-color: var(--red); }
+
+  /* ====== LAYOUT ====== */
+  .content-wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 60px;
+  }
+
+  section { padding: 56px 0; border-bottom: 1px solid var(--gray-200); }
+  section:last-child { border-bottom: none; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .section-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px; height: 30px;
+    background: var(--navy);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .section-num.appendix { background: var(--gray-500); }
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.02em;
+  }
+
+  /* ====== SUMMARY CARDS ====== */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .summary-card {
+    background: var(--gray-100);
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    padding: 24px 26px;
+  }
+  .summary-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gray-300);
+    letter-spacing: 0.04em;
+  }
+
+  /* priority axis */
+  .priority-axis {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .axis-pill {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .axis-pill.primary { background: var(--red); color: white; }
+  .axis-pill.secondary { background: var(--gray-200); color: var(--gray-700); }
+  .axis-arrow {
+    display: flex;
+    align-items: center;
+    color: var(--gray-500);
+    font-size: 18px;
+  }
+
+  /* milestone list */
+  .milestone-list { list-style: none; }
+  .milestone-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 13px;
+  }
+  .milestone-list li:last-child { border-bottom: none; }
+  .ms-date {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-500);
+    min-width: 58px;
+    letter-spacing: 0.04em;
+  }
+  .ms-phase {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-weight: 700;
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+  .ph0 { background: #e8f0fe; color: #1a6bbd; }
+  .ph1 { background: #e6f4ea; color: #0a7c42; }
+  .ph2 { background: #fff3e0; color: #e67e22; }
+  .ph3 { background: #f3e8fd; color: #7b3fa0; }
+
+  /* roadmap timeline summary */
+  .timeline-summary {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .tl-block {
+    flex: 1;
+    padding: 12px 14px;
+    border-right: 1px solid var(--gray-300);
+    font-size: 11px;
+  }
+  .tl-block:last-child { border-right: none; }
+  .tl-block .tl-phase {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .tl-block .tl-period {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .tl-block .tl-desc { color: var(--gray-500); line-height: 1.5; }
+  .tl-block.active-block { background: var(--red-light); }
+  .tl-block.active-block .tl-phase { color: var(--red); }
+
+  /* ====== PLANNING REQUIREMENTS TABLE ====== */
+  .planning-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .planning-table th {
+    background: var(--navy);
+    color: white;
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .planning-table th:first-child { width: 14%; border-radius: 0; }
+  .planning-table th:nth-child(2) { width: 16%; }
+  .planning-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: top;
+  }
+  .planning-table tr:last-child td { border-bottom: none; }
+  .planning-table tr:hover td { background: var(--gray-100); }
+  .planning-table .cat-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .cat-a { background: var(--red); }
+  .cat-b { background: var(--blue); }
+  .cat-c { background: var(--purple); }
+  .cat-d { background: var(--green); }
+  .cat-e { background: var(--orange); }
+  .status-done { color: var(--green); font-size: 12px; font-weight: 700; }
+  .status-partial { color: var(--orange); font-size: 12px; font-weight: 700; }
+  .status-todo { color: var(--gray-500); font-size: 12px; }
+  .deadline-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .db-mar { background: #fdecea; color: var(--red); }
+  .db-apr { background: var(--blue-light); color: var(--blue); }
+
+  /* ====== ROADMAP ====== */
+  .roadmap-phases { display: flex; flex-direction: column; gap: 0; }
+  .roadmap-phase {
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .phase-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 22px;
+    cursor: pointer;
+    background: var(--gray-100);
+    user-select: none;
+    border-bottom: 1px solid var(--gray-300);
+  }
+  .phase-header:hover { background: var(--gray-200); }
+  .phase-title-group { display: flex; align-items: center; gap: 12px; }
+  .phase-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+  }
+  .phase-period {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy);
+  }
+  .phase-toggle { color: var(--gray-500); font-size: 16px; transition: transform 0.2s; }
+  .phase-toggle.open { transform: rotate(180deg); }
+  .phase-body { padding: 20px 22px; }
+  .phase-note {
+    font-size: 12px;
+    color: var(--orange);
+    background: var(--orange-light);
+    padding: 8px 14px;
+    border-radius: 5px;
+    margin-bottom: 16px;
+    border-left: 3px solid var(--orange);
+  }
+
+  /* month rows */
+  .month-rows { display: flex; flex-direction: column; gap: 0; }
+  .month-row {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 10px 0;
+  }
+  .month-row:last-child { border-bottom: none; }
+  .month-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray-500);
+    padding-top: 2px;
+  }
+  .month-items { display: flex; flex-direction: column; gap: 5px; }
+  .month-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .month-item.milestone {
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .item-icon { font-size: 12px; }
+  .action-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .tag-cms { background: #e6f4ea; color: var(--green); }
+  .tag-content { background: var(--blue-light); color: var(--blue); }
+  .tag-interview { background: var(--orange-light); color: var(--orange); }
+  .tag-data { background: var(--purple-light); color: var(--purple); }
+  .tag-check { background: var(--red-light); color: var(--red); }
+  .tag-design { background: #fff8e1; color: #b58900; }
+
+  /* ====== CONTENT PLAN ====== */
+  .content-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .content-card {
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .content-card-head {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .content-card-head .content-type {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .priority-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+  .p-s { background: var(--red); color: white; }
+  .p-a { background: var(--navy); color: white; }
+  .p-b { background: var(--gray-500); color: white; }
+  .content-card-body { padding: 16px 18px; }
+  .content-card-body dl { display: grid; grid-template-columns: 70px 1fr; gap: 6px 10px; font-size: 12.5px; }
+  .content-card-body dt { color: var(--gray-500); font-weight: 500; }
+  .content-card-body dd { font-weight: 500; color: var(--navy); }
+  .source-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-weight: 700;
+    background: var(--blue-light);
+    color: var(--blue);
+    margin-right: 3px;
+  }
+  .source-tag.rds { background: var(--green-light); color: var(--green); }
+  .source-tag.new { background: var(--red-light); color: var(--red); }
+
+  /* ====== TOBE SITE TREE ====== */
+  .site-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .site-tree-wrapper {
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .site-tree-header {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--gray-300);
+  }
+  .site-tree-header.asis { background: var(--gray-200); color: var(--gray-700); }
+  .site-tree-header.tobe { background: var(--navy); color: white; }
+  .site-tree-body { padding: 16px 20px; font-size: 12.5px; }
+
+  .tree-node {
+    margin: 3px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    line-height: 1.6;
+  }
+  .tree-indent { padding-left: 0; }
+  .tree-indent-1 { padding-left: 16px; }
+  .tree-indent-2 { padding-left: 32px; }
+  .tree-indent-3 { padding-left: 48px; }
+  .tree-connector { color: var(--gray-300); font-size: 11px; flex-shrink: 0; }
+  .tree-url { font-family: monospace; font-size: 12px; color: var(--navy); font-weight: 500; }
+  .tree-label { font-size: 12px; color: var(--gray-700); }
+  .badge-new {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: var(--red);
+    color: white;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .badge-cms {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: var(--green);
+    color: white;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .badge-scope {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: var(--gray-200);
+    color: var(--gray-500);
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .tree-issue {
+    font-size: 11px;
+    color: var(--red);
+    background: var(--red-light);
+    padding: 1px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .tobe-legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--gray-700);
+  }
+
+  /* Full TOBE tree */
+  .tobe-full-tree {
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 20px;
+  }
+  .tobe-full-header {
+    background: var(--navy);
+    color: white;
+    padding: 14px 24px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--navy-light);
+  }
+  .tobe-full-body {
+    padding: 20px 24px;
+    column-count: 2;
+    column-gap: 40px;
+  }
+  .tree-section {
+    break-inside: avoid;
+    margin-bottom: 18px;
+  }
+  .tree-section-root {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+  .tree-section-root.existing { background: var(--gray-100); }
+  .tree-section-root.new-section { background: var(--red-light); }
+  .tree-section-root.expand { background: var(--orange-light); }
+  .tree-section-root.scope-out { background: var(--gray-200); opacity: 0.6; }
+  .tree-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 10px 3px 22px;
+    font-size: 12px;
+    color: var(--gray-700);
+  }
+
+  /* ====== GUARDRAILS ====== */
+  .guardrails-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .guardrail-card {
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .guardrail-head {
+    padding: 13px 18px;
+    background: var(--gray-100);
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .guardrail-body { padding: 14px 18px; }
+  .guardrail-item {
+    display: flex;
+    gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 12.5px;
+  }
+  .guardrail-item:last-child { border-bottom: none; }
+  .gi-icon { font-size: 13px; flex-shrink: 0; }
+  .gi-text { flex: 1; }
+  .gi-text strong { font-weight: 700; color: var(--navy); }
+
+  /* ====== KPI TABLE ====== */
+  .kpi-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .kpi-table th {
+    background: var(--gray-100);
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--gray-700);
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid var(--gray-300);
+  }
+  .kpi-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: top;
+  }
+  .kpi-table tr:hover td { background: var(--gray-100); }
+  .kpi-primary { font-weight: 700; color: var(--navy); }
+  .kpi-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .timing-chip {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--blue-light);
+    color: var(--blue);
+  }
+
+  /* ====== APPENDIX ====== */
+  .appendix-section { background: var(--gray-100); border-radius: 8px; padding: 28px 32px; margin-bottom: 24px; }
+  .appendix-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--gray-300);
+    letter-spacing: 0.03em;
+  }
+
+  /* competitor comparison */
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    background: white;
+  }
+  .comp-table th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid var(--gray-300);
+    background: var(--gray-100);
+  }
+  .comp-table th.rag-col { background: var(--navy); color: white; }
+  .comp-table th.doda-col { background: var(--blue-light); color: var(--blue); }
+  .comp-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: top;
+  }
+  .comp-table .metric-name { font-weight: 500; color: var(--gray-700); }
+  .gap-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 3px;
+  }
+  .gap-big { background: var(--red-light); color: var(--red); }
+  .gap-med { background: var(--orange-light); color: var(--orange); }
+  .gap-none { background: var(--green-light); color: var(--green); }
+  .has-icon { display: flex; align-items: center; gap: 6px; }
+
+  /* CMS comparison */
+  .cms-comp-wrap { overflow-x: auto; }
+  .cms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    background: white;
+    min-width: 600px;
+  }
+  .cms-table th {
+    padding: 11px 14px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid var(--gray-300);
+  }
+  .cms-table th.rec { background: var(--green); color: white; }
+  .cms-table th.alt1, .cms-table th.alt2 { background: var(--gray-100); color: var(--gray-700); }
+  .cms-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--gray-200);
+    text-align: center;
+  }
+  .cms-table td:first-child { text-align: left; font-weight: 500; color: var(--gray-700); }
+  .ok { color: var(--green); font-size: 14px; }
+  .good { color: var(--blue); font-size: 14px; }
+  .bad { color: var(--red); font-size: 14px; }
+
+  /* content count comparison */
+  .count-comparison {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .count-card {
+    background: white;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    padding: 16px 18px;
+    text-align: center;
+  }
+  .count-card .content-name { font-size: 12px; color: var(--gray-500); margin-bottom: 10px; }
+  .count-comparison-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .count-bar { text-align: center; }
+  .count-num {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .count-site { font-size: 10px; color: var(--gray-500); margin-top: 2px; }
+  .count-rag { color: var(--red); }
+  .count-doda { color: var(--blue); }
+  .count-arrow { color: var(--gray-300); font-size: 20px; }
+
+  /* SEO gap analysis */
+  .seo-issues { display: flex; flex-direction: column; gap: 8px; }
+  .seo-issue {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: white;
+    border: 1px solid var(--gray-300);
+    font-size: 13px;
+  }
+  .seo-severity {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .sev-high { background: var(--red-light); color: var(--red); }
+  .sev-med { background: var(--orange-light); color: var(--orange); }
+  .sev-low { background: var(--gray-200); color: var(--gray-700); }
+
+  /* ====== PRINT ====== */
+  @media print {
+    .sticky-nav { display: none; }
+    .phase-body { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="doc-header">
+  <div class="eyebrow">PROJECT DOCUMENT</div>
+  <h1>r-agent.com サイトリニューアル企画書</h1>
+  <div class="meta">作成日：2026年3月 ／ 対象：r-agent.com（MyPage・求人DBは対象外）</div>
+</header>
+
+<!-- NAV -->
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <button onclick="scrollToSection('summary')" class="nav-link active">0. サマリー</button>
+    <button onclick="scrollToSection('planning')" class="nav-link">1. 企画フェーズ決定事項</button>
+    <button onclick="scrollToSection('content-plan')" class="nav-link">2. コンテンツ公開計画</button>
+    <button onclick="scrollToSection('tobe')" class="nav-link">3. TOBEサイト構造</button>
+    <button onclick="scrollToSection('guardrails')" class="nav-link">4. ガードレール</button>
+    <button onclick="scrollToSection('kpi')" class="nav-link">5. KPI設計</button>
+    <button onclick="scrollToSection('roadmap')" class="nav-link">6. ロードマップ</button>
+    <button onclick="scrollToSection('appendix')" class="nav-link">APX. 調査データ</button>
+  </div>
+</nav>
+
+<div class="content-wrap">
+
+<!-- ====== 0. SUMMARY ====== -->
+<section id="summary">
+  <div class="section-header">
+    <div class="section-num">0</div>
+    <h2 class="section-title">プロジェクトサマリー</h2>
+  </div>
+
+  <div class="summary-grid">
+
+    <!-- Card 1: 目的と優先軸 -->
+    <div class="summary-card">
+      <h3>🎯 プロジェクト目的と優先軸</h3>
+      <p style="font-size:13px;color:var(--gray-700);margin-bottom:14px;">登録後の<strong>「利用率向上」</strong>を主軸に据え、新規流入の最大化を副次目標に位置づける。</p>
+      <div class="priority-axis">
+        <div class="axis-pill primary">① 利用率向上<br><small style="font-weight:400;font-size:10px;">面談転換率・求人応募率</small></div>
+        <div class="axis-arrow">›</div>
+        <div class="axis-pill secondary">② 新規流入獲得<br><small style="font-weight:400;font-size:10px;">自然検索・登録率</small></div>
+      </div>
+      <p style="font-size:12px;color:var(--gray-500);">定量目標は追って設計</p>
+    </div>
+
+    <!-- Card 2: 主要マイルストーン＋ロードマップ全体 -->
+    <div class="summary-card">
+      <h3>📅 主要マイルストーン＋ロードマップ概要</h3>
+      <div class="timeline-summary" style="margin-bottom:12px;">
+        <div class="tl-block active-block">
+          <div class="tl-phase ph0">Ph.0-1</div>
+          <div class="tl-period">〜3月末</div>
+          <div class="tl-desc">大方針社内承認</div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(200,16,46,0.15);font-size:10px;line-height:1.7;color:var(--gray-700);">
+            ・ASIS分析<br>
+            ・TOBE方向性<br>
+            ・KPI枠組み<br>
+            ・CMS方針
+          </div>
+        </div>
+        <div class="tl-block">
+          <div class="tl-phase ph0">Ph.0-2</div>
+          <div class="tl-period">4月末</div>
+          <div class="tl-desc">詳細設計GoSign</div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-200);font-size:10px;line-height:1.7;color:var(--gray-700);">
+            ・URL/IA設計<br>
+            ・コンテンツ計画<br>
+            ・CMS要件定義<br>
+            ・体制・予算確定
+          </div>
+        </div>
+        <div class="tl-block">
+          <div class="tl-phase ph1">Ph.1</div>
+          <div class="tl-period">5〜9月</div>
+          <div class="tl-desc">既存資産活用＋取材並走</div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-200);font-size:10px;line-height:1.7;color:var(--gray-700);">
+            ・CMS構築（5月）<br>
+            <span style="color:var(--red);font-weight:700;">6月公開：</span><br>
+            　企業特集 100本<br>
+            　転職体験談 30本<br>
+            　Q&A 50本<br>
+            <span style="color:var(--gray-500);">7月：年収データ</span><br>
+            <span style="color:var(--gray-500);">8月：動向レポート</span><br>
+            <span style="color:var(--orange);font-weight:700;">9月末：一次評価</span>
+          </div>
+        </div>
+        <div class="tl-block">
+          <div class="tl-phase ph2">Ph.2</div>
+          <div class="tl-period">10月〜</div>
+          <div class="tl-desc">制作コンテンツ拡充</div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-200);font-size:10px;line-height:1.7;color:var(--gray-700);">
+            ・診断ページ<br>
+            ・リライト改善<br>
+            ・SEO/CTA最適化<br>
+            ・体験談追加<br>
+            ・企業特集継続
+          </div>
+        </div>
+        <div class="tl-block">
+          <div class="tl-phase ph3">Ph.3</div>
+          <div class="tl-period">4月'27〜</div>
+          <div class="tl-desc">継続改善</div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-200);font-size:10px;line-height:1.7;color:var(--gray-700);">
+            ・KPIサイクル<br>
+            ・優先度見直し<br>
+            ・コンテンツ継続<br>
+            　拡張
+          </div>
+        </div>
+      </div>
+      <ul class="milestone-list">
+        <li><span class="ms-date">3月末</span><span class="ms-phase ph0">Ph.0-1</span>大方針・TOBE骨格の社内承認</li>
+        <li><span class="ms-date">4月末</span><span class="ms-phase ph0">Ph.0-2</span>詳細設計承認・制作GoSign</li>
+        <li><span class="ms-date">6月</span><span class="ms-phase ph1">Ph.1</span>企業特集100本・体験談30本・Q&A50本 一斉公開</li>
+        <li><span class="ms-date">9月末</span><span class="ms-phase ph1">評価</span>コンテンツ別KPI初期値確認・次期方針決定</li>
+        <li><span class="ms-date">10月〜</span><span class="ms-phase ph2">Ph.2</span>評価踏まえた拡充・最適化</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====== 1. PLANNING REQUIREMENTS ====== -->
+<section id="planning">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <h2 class="section-title">企画フェーズで決めること（大分類整理）</h2>
+  </div>
+  <p style="font-size:13px;color:var(--gray-500);margin-bottom:24px;">各カテゴリの検討事項・3月末までに決める内容・4月末までに具体化する内容を整理。</p>
+
+  <table class="planning-table">
+    <thead>
+      <tr>
+        <th>カテゴリ</th>
+        <th>項目</th>
+        <th>3月末までに決めること <span class="deadline-badge db-mar">3月末</span></th>
+        <th>4月で具体化すること <span class="deadline-badge db-apr">4月末</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- A -->
+      <tr>
+        <td rowspan="5"><span class="cat-label cat-a">A</span><br><small style="font-size:11px;color:var(--gray-500);margin-top:4px;display:block;">戦略・方針</small></td>
+        <td>KPI設計</td>
+        <td>指標の大枠（登録率・利用率・PV）</td>
+        <td>計測箇所・ツール・基準値</td>
+      </tr>
+      <tr>
+        <td>ターゲット定義</td>
+        <td>フェーズ別CSの優先順位方向性</td>
+        <td>ペルソナ・行動シナリオ</td>
+      </tr>
+      <tr>
+        <td>コンテンツ優先順位</td>
+        <td>目的・競合劣位・SEO・CSニーズから方針策定</td>
+        <td>種別×本数×スケジュール</td>
+      </tr>
+      <tr>
+        <td>コスト試算</td>
+        <td>概算規模感（CMS・制作・運用費）</td>
+        <td>詳細見積もり・予算申請額の確定</td>
+      </tr>
+      <tr>
+        <td>資産活用方針</td>
+        <td>RNN・RDS活用の大方針合意</td>
+        <td>移行対象コンテンツの選定リスト</td>
+      </tr>
+      <!-- B -->
+      <tr>
+        <td rowspan="2"><span class="cat-label cat-b">B</span><br><small style="font-size:11px;color:var(--gray-500);margin-top:4px;display:block;">サイト設計</small></td>
+        <td>TOBEサイトマップ</td>
+        <td>新設・廃止・維持ページの大分類</td>
+        <td>URL設計・IA・CTA設計</td>
+      </tr>
+      <tr>
+        <td>既存URL扱い</td>
+        <td>変更する場合のリダイレクト方針</td>
+        <td>301リダイレクト設計</td>
+      </tr>
+      <!-- C -->
+      <tr>
+        <td rowspan="3"><span class="cat-label cat-c">C</span><br><small style="font-size:11px;color:var(--gray-500);margin-top:4px;display:block;">コンテンツ設計</small></td>
+        <td>コンテンツ種別定義</td>
+        <td>何を作るか（種別名・目的）</td>
+        <td>各種別の型・構成要素</td>
+      </tr>
+      <tr>
+        <td>コンテンツ詳細計画（移行＋新規）</td>
+        <td>—</td>
+        <td>移行対象の棚卸し・選定（RNN / RDS）、取材対象・本数・スケジュール</td>
+      </tr>
+      <tr>
+        <td>品質基準・監修ルール</td>
+        <td>—</td>
+        <td>記事ごとの基準・監修フロー・更新ルール</td>
+      </tr>
+      <!-- D -->
+      <tr>
+        <td rowspan="2"><span class="cat-label cat-d">D</span><br><small style="font-size:11px;color:var(--gray-500);margin-top:4px;display:block;">運用設計</small></td>
+        <td>制作体制</td>
+        <td>—</td>
+        <td>社内・外部ライター・CA連携の役割分担</td>
+      </tr>
+      <tr>
+        <td>更新サイクル・効果測定</td>
+        <td>—</td>
+        <td>誰がいつ何を見て判断するか。<br>どのような体制で更新するか（マニュアル含む）</td>
+      </tr>
+      <!-- E -->
+      <tr>
+        <td rowspan="2"><span class="cat-label cat-e">E</span><br><small style="font-size:11px;color:var(--gray-500);margin-top:4px;display:block;">技術・CMS</small></td>
+        <td>CMS選定・管理範囲</td>
+        <td>機能・価格からどのCMSを選定するかの大方針。どのコンテンツをCMS化するか</td>
+        <td>CMS要件定義・契約</td>
+      </tr>
+      <tr>
+        <td>データ移行設計</td>
+        <td>—</td>
+        <td>RNN・RDSコンテンツの移行フォーマット・作業量</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====== 2. CONTENT PLAN ====== -->
+<section id="content-plan">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <h2 class="section-title">コンテンツ公開計画</h2>
+  </div>
+
+  <div class="content-grid">
+
+    <div class="content-card">
+      <div class="content-card-head">
+        <div class="content-type">🏢 企業特集</div>
+        <span class="priority-badge p-s">優先度S</span>
+      </div>
+      <div class="content-card-body">
+        <dl>
+          <dt>初期公開</dt><dd>6月</dd>
+          <dt>初期本数</dt><dd><strong>100本</strong></dd>
+          <dt>追加ペース</dt><dd>月10本（RDS取材継続）</dd>
+          <dt>資産源</dt><dd><span class="source-tag rds">RDS流用</span><span class="source-tag new">新規取材</span></dd>
+          <dt>取材要否</dt><dd>不要（流用分）/ 必要（新規分）</dd>
+          <dt>目的</dt><dd>利用率向上の核。登録後CSで「応募したい企業」との接点</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="content-card-head">
+        <div class="content-type">💬 転職体験談</div>
+        <span class="priority-badge p-s">優先度S</span>
+      </div>
+      <div class="content-card-body">
+        <dl>
+          <dt>初期公開</dt><dd>6月</dd>
+          <dt>初期本数</dt><dd><strong>30本 min</strong></dd>
+          <dt>追加ペース</dt><dd>月5本 ※要試算</dd>
+          <dt>資産源</dt><dd><span class="source-tag new">新規取材</span></dd>
+          <dt>取材要否</dt><dd>必要（5月〜取材開始）</dd>
+          <dt>目的</dt><dd>SEO流入×登録モチベーション向上。業種・年代別で検索意図に刺さる</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="content-card-head">
+        <div class="content-type">❓ 転職Q&A</div>
+        <span class="priority-badge p-a">優先度A</span>
+      </div>
+      <div class="content-card-body">
+        <dl>
+          <dt>初期公開</dt><dd>6月</dd>
+          <dt>初期本数</dt><dd>50本（RNN移行）</dd>
+          <dt>追加ペース</dt><dd>追加制作（100本達成目標）</dd>
+          <dt>資産源</dt><dd><span class="source-tag">RNN移行</span></dd>
+          <dt>取材要否</dt><dd>不要</dd>
+          <dt>目的</dt><dd>長尾SEO獲得の主戦場。RNNジャーナルデータ移行で初期ボリューム確保</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="content-card-head">
+        <div class="content-type">💰 年収データ</div>
+        <span class="priority-badge p-a">優先度A</span>
+      </div>
+      <div class="content-card-body">
+        <dl>
+          <dt>初期公開</dt><dd>7月</dd>
+          <dt>初期本数</dt><dd>数ページ</dd>
+          <dt>追加ペース</dt><dd>年1〜2回更新</dd>
+          <dt>資産源</dt><dd><span class="source-tag">Recruitデータ</span></dd>
+          <dt>取材要否</dt><dd>不要</dd>
+          <dt>目的</dt><dd>転職動機No.1「年収不満」層へのリーチ。市場価値認識→登録CTAへ</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="content-card-head">
+        <div class="content-type">📝 ノウハウ記事</div>
+        <span class="priority-badge p-a">優先度A</span>
+      </div>
+      <div class="content-card-body">
+        <dl>
+          <dt>初期公開</dt><dd>7月</dd>
+          <dt>初期本数</dt><dd>既存拡充</dd>
+          <dt>追加ペース</dt><dd>随時</dd>
+          <dt>資産源</dt><dd><span class="source-tag">既存</span><span class="source-tag">RNN移行</span></dd>
+          <dt>取材要否</dt><dd>不要</dd>
+          <dt>目的</dt><dd>登録後CS活動支援（面接対策・キャリア設計）。利用率向上に直結</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="content-card-head">
+        <div class="content-type">🔍 診断ページ</div>
+        <span class="priority-badge p-b">優先度B</span>
+      </div>
+      <div class="content-card-body">
+        <dl>
+          <dt>初期公開</dt><dd>10月〜</dd>
+          <dt>初期本数</dt><dd>—</dd>
+          <dt>追加ペース</dt><dd>—</dd>
+          <dt>資産源</dt><dd><span class="source-tag">連携・実装</span></dd>
+          <dt>取材要否</dt><dd>不要</dd>
+          <dt>目的</dt><dd>登録前CSの「登録理由」作り。グッドポイント診断誘導またはデータ移行後登録</dd>
+        </dl>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====== 3. TOBE SITE ====== -->
+<section id="tobe">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <h2 class="section-title">TOBEサイト構造（ASIS比較）</h2>
+  </div>
+
+  <!-- Legend -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;align-items:center;">
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-700);"><span class="badge-new">NEW</span> 新規セクション</div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-700);"><span class="badge-cms">CMS</span> microCMS管理対象</div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-700);"><span class="badge-scope">対象外</span> スコープ外</div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-500);">｜</div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:12px;"><span style="background:#fff3cd;border:1px solid #ffc107;border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;color:#856404;">課題あり</span> ASIS課題箇所</div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:12px;"><span style="color:var(--red);font-size:13px;">✕</span> 欠落コンテンツ</div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:12px;"><span style="color:var(--green);font-size:13px;">✓</span> TOBE対応済み</div>
+  </div>
+
+  <!-- 行対比テーブル -->
+  <div style="border:1px solid var(--gray-300);border-radius:10px;overflow:hidden;">
+    <!-- ヘッダー行 -->
+    <div style="display:grid;grid-template-columns:20px 1fr 1fr;background:var(--navy);">
+      <div style="border-right:1px solid var(--navy-light);"></div>
+      <div style="padding:12px 20px;font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:0.08em;text-transform:uppercase;border-right:1px solid var(--navy-light);">ASIS（現状）</div>
+      <div style="padding:12px 20px;font-size:12px;font-weight:700;color:rgba(255,255,255,0.9);letter-spacing:0.08em;text-transform:uppercase;">TOBE（リニューアル後）</div>
+    </div>
+
+    <!-- Row: / トップ -->
+    <div style="display:grid;grid-template-columns:20px 1fr 1fr;border-bottom:1px solid var(--gray-200);">
+      <div style="background:var(--gray-200);border-right:1px solid var(--gray-300);"></div>
+      <div style="padding:12px 20px;border-right:1px solid var(--gray-200);background:var(--white);">
+        <div style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">トップページ</div>
+      </div>
+      <div style="padding:12px 20px;background:var(--white);">
+        <div style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">トップページ ─ デザイン改修</div>
+      </div>
+    </div>
+
+    <!-- Row: /service/ -->
+    <div style="display:grid;grid-template-columns:20px 1fr 1fr;border-bottom:1px solid var(--gray-200);">
+      <div style="background:var(--gray-200);border-right:1px solid var(--gray-300);"></div>
+      <div style="padding:12px 20px;border-right:1px solid var(--gray-200);background:var(--white);">
+        <div style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/service/</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">サービス紹介（/chigai/ /data/ 配下）</div>
+      </div>
+      <div style="padding:12px 20px;background:var(--white);">
+        <div style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/service/</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">維持・微調整</div>
+      </div>
+    </div>
+
+    <!-- Row: /job_search/ -->
+    <div style="display:grid;grid-template-columns:20px 1fr 1fr;border-bottom:1px solid var(--gray-200);">
+      <div style="background:var(--gray-200);border-right:1px solid var(--gray-300);"></div>
+      <div style="padding:12px 20px;border-right:1px solid var(--gray-200);background:var(--white);">
+        <div style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/job_search/</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">求人検索（動的生成）</div>
+      </div>
+      <div style="padding:12px 20px;background:var(--gray-100);">
+        <div style="font-family:monospace;font-size:12px;font-weight:600;color:var(--gray-500);">/job_search/</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">現行維持 <span class="badge-scope">対象外</span></div>
+      </div>
+    </div>
+
+    <!-- Row: /guide/ -->
+    <div style="display:grid;grid-template-columns:20px 1fr 1fr;border-bottom:1px solid var(--gray-200);">
+      <div style="background:var(--blue);border-right:1px solid rgba(255,255,255,0.2);"></div>
+      <div style="padding:12px 20px;border-right:1px solid var(--gray-200);background:#fafbff;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/guide/</span>
+          <span style="background:#fff3cd;border:1px solid #ffc107;border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;color:#856404;">種別混在</span>
+        </div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:4px;line-height:1.8;">
+          /resume/ リクルートノウハウ<br>
+          /rirekisho/ 履歴書ガイド<br>
+          /offer/ オファー対応<br>
+          /tag/[タグ]/ タグページ
+        </div>
+      </div>
+      <div style="padding:12px 20px;background:#fafbff;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/guide/</span>
+          <span class="badge-cms">CMS</span>
+        </div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:4px;line-height:1.8;">
+          /resume/ /rirekisho/ （既存維持）<br>
+          <span style="color:var(--green);">✓</span> /interview/ 面接対策 <span class="badge-new">NEW</span> <span class="badge-cms">CMS</span><br>
+          <span style="color:var(--green);">✓</span> /qa/ 転職Q&A <span class="badge-new">NEW</span> <span class="badge-cms">CMS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: /data/ -->
+    <div style="display:grid;grid-template-columns:20px 1fr 1fr;border-bottom:1px solid var(--gray-200);">
+      <div style="background:var(--blue);border-right:1px solid rgba(255,255,255,0.2);"></div>
+      <div style="padding:12px 20px;border-right:1px solid var(--gray-200);background:#fafbff;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/data/market/</span>
+          <span style="background:#fff3cd;border:1px solid #ffc107;border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;color:#856404;">URLが分散</span>
+        </div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:4px;line-height:1.8;">
+          /service/data/ にも一部<br>
+          <span style="color:var(--red);font-size:12px;">✕ 年収データなし</span>
+        </div>
+      </div>
+      <div style="padding:12px 20px;background:#fafbff;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/data/</span>
+          <span style="font-size:11px;color:var(--gray-500);">URL統合</span>
+        </div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:4px;line-height:1.8;">
+          /market/ （既存）<br>
+          <span style="color:var(--green);">✓</span> /salary/ 年収データ <span class="badge-new">NEW</span> <span class="badge-cms">CMS</span><br>
+          <span style="color:var(--green);">✓</span> /trend/ 転職動向 <span class="badge-new">NEW</span> <span class="badge-cms">CMS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: /company/ NEW -->
+    <div style="display:grid;grid-template-columns:20px 1fr 1fr;border-bottom:1px solid var(--gray-200);">
+      <div style="background:var(--red);border-right:1px solid rgba(255,255,255,0.2);"></div>
+      <div style="padding:12px 20px;border-right:1px solid var(--gray-200);background:#fff8f8;">
+        <div style="font-size:12px;font-weight:600;color:var(--red);">✕ 企業特集なし</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">登録後ユーザーの応募先探しをサポートするコンテンツが完全に欠落</div>
+      </div>
+      <div style="padding:12px 20px;background:var(--red-light);">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/company/</span>
+          <span class="badge-new">NEW</span><span class="badge-cms">CMS</span>
+        </div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:4px;line-height:1.8;">
+          /[company-slug]/ 企業個別ページ<br>
+          /[industry]/ 業種別一覧<br>
+          <span style="color:var(--red);font-size:11px;font-weight:700;">初期100本（RDS移行）＋月10本</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: /story/ NEW -->
+    <div style="display:grid;grid-template-columns:20px 1fr 1fr;border-bottom:1px solid var(--gray-200);">
+      <div style="background:var(--red);border-right:1px solid rgba(255,255,255,0.2);"></div>
+      <div style="padding:12px 20px;border-right:1px solid var(--gray-200);background:#fff8f8;">
+        <div style="font-size:12px;font-weight:600;color:var(--red);">✕ 転職体験談なし</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">SEO流入 × 登録モチベーション向上の両立コンテンツが欠落</div>
+      </div>
+      <div style="padding:12px 20px;background:var(--red-light);">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/story/</span>
+          <span class="badge-new">NEW</span><span class="badge-cms">CMS</span>
+        </div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:4px;line-height:1.8;">
+          /[industry]/ 業種別<br>
+          /[age]/ 年代別（30代・40代等）<br>
+          <span style="color:var(--red);font-size:11px;font-weight:700;">初期30本（5月〜取材）＋月5本</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: /diagnosis/ NEW -->
+    <div style="display:grid;grid-template-columns:20px 1fr 1fr;border-bottom:1px solid var(--gray-200);">
+      <div style="background:var(--orange);border-right:1px solid rgba(255,255,255,0.2);"></div>
+      <div style="padding:12px 20px;border-right:1px solid var(--gray-200);background:var(--orange-light);">
+        <div style="font-size:12px;font-weight:600;color:var(--orange);">✕ 診断ツールなし</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">登録前の「登録理由づくり」機能が欠落</div>
+      </div>
+      <div style="padding:12px 20px;background:var(--orange-light);">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/diagnosis/</span>
+          <span class="badge-new">NEW</span>
+        </div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:4px;line-height:1.8;">
+          診断・自己分析ツール<br>
+          <span style="color:var(--orange);font-size:11px;font-weight:700;">Ph.2（10月〜）</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: /industry/ -->
+    <div style="display:grid;grid-template-columns:20px 1fr 1fr;">
+      <div style="background:var(--purple);border-right:1px solid rgba(255,255,255,0.2);"></div>
+      <div style="padding:12px 20px;border-right:1px solid var(--gray-200);background:#faf5ff;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/[industry]/</span>
+          <span style="background:#fff3cd;border:1px solid #ffc107;border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;color:#856404;">3業種のみ</span>
+        </div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">IT・グローバル・製造のみ</div>
+      </div>
+      <div style="padding:12px 20px;background:#faf5ff;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:monospace;font-size:12px;font-weight:600;color:var(--navy);">/industry/</span>
+        </div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:4px;line-height:1.8;">
+          /it/ /global/ /manufacturing/ （既存）<br>
+          <span style="color:var(--green);">✓</span> /sales/ /finance/ /medical/ <span class="badge-new">NEW</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CMS管理範囲 -->
+  <div style="background:var(--green-light);border:1px solid var(--green);border-radius:8px;padding:20px 24px;margin-top:16px;">
+    <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:12px;">🟢 microCMS管理範囲（コンテンツ層のみ・既存システム非置換）</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;">
+      <div>
+        <div style="font-weight:700;color:var(--navy);margin-bottom:6px;">CMS管理対象</div>
+        <div style="color:var(--gray-700);line-height:2;">/guide/ 配下の記事群<br>/company/ 企業特集記事<br>/story/ 転職体験談<br>/guide/qa/ Q&Aコンテンツ<br>/data/salary/ /data/trend/</div>
+      </div>
+      <div>
+        <div style="font-weight:700;color:var(--navy);margin-bottom:6px;">現行システム維持（CMS対象外）</div>
+        <div style="color:var(--gray-700);line-height:2;">/job_search/ 求人検索（DB連動）<br>/service/ サービス説明（静的）<br>/industry/ ランディングページ（静的）<br>トップページ（デザイン改修のみ）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 4. GUARDRAILS ====== -->
+<section id="guardrails">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <h2 class="section-title">ガードレール（プロジェクト制約整理）</h2>
+  </div>
+
+  <div class="guardrails-grid">
+    <div class="guardrail-card">
+      <div class="guardrail-head">🔗 URL・サイト構造</div>
+      <div class="guardrail-body">
+        <div class="guardrail-item">
+          <div class="gi-icon">🔒</div>
+          <div class="gi-text"><strong>既存URLは原則変更しない</strong>（SEO保全）。変更する場合は301リダイレクト必須</div>
+        </div>
+        <div class="guardrail-item">
+          <div class="gi-icon">🔒</div>
+          <div class="gi-text"><strong>/job_search/ は対象外</strong>。現行動的生成を維持</div>
+        </div>
+        <div class="guardrail-item">
+          <div class="gi-icon">⚠️</div>
+          <div class="gi-text"><strong>URL統一ルール必要</strong>：現状 /data/market/ と /service/data/ が分散。新規は /[section]/[slug]/ で統一</div>
+        </div>
+        <div class="guardrail-item">
+          <div class="gi-icon">⚠️</div>
+          <div class="gi-text">新規コンテンツURLは<strong>数値IDを使わない</strong>（既存のarticle4402型は継承、新規はスラグで統一）</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="guardrail-card">
+      <div class="guardrail-head">⚙️ CMS・技術</div>
+      <div class="guardrail-body">
+        <div class="guardrail-item">
+          <div class="gi-icon">🔒</div>
+          <div class="gi-text"><strong>CMS未導入</strong>（確定情報）。microCMS新規導入が前提</div>
+        </div>
+        <div class="guardrail-item">
+          <div class="gi-icon">🔒</div>
+          <div class="gi-text">現行サイトはNext.js + SSG構成（推定）。<strong>全体置き換えではなくコンテンツ層のみ部分導入</strong></div>
+        </div>
+        <div class="guardrail-item">
+          <div class="gi-icon">⚠️</div>
+          <div class="gi-text">テンプレート設計を初期に行うことで追加ページコストを最小化</div>
+        </div>
+        <div class="guardrail-item">
+          <div class="gi-icon">⚠️</div>
+          <div class="gi-text">MyPage（pdt.r-agent.com）は<strong>別ドメイン・スコープ外</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="guardrail-card">
+      <div class="guardrail-head">📄 コンテンツ運用</div>
+      <div class="guardrail-body">
+        <div class="guardrail-item">
+          <div class="gi-icon">🔒</div>
+          <div class="gi-text"><strong>RNN（リクナビNEXT）</strong>：Indeed Japan社との別主体のため、直接流用ではなく<strong>データ移行（テキスト・画像をRAG用に再登録）</strong>。更新連動なし</div>
+        </div>
+        <div class="guardrail-item">
+          <div class="gi-icon">🔒</div>
+          <div class="gi-text"><strong>RDS（リクルートダイレクトスカウト）</strong>：企業特集記事（既存約100本・月10本継続）を流用可。<strong>最速で動ける最大の資産</strong></div>
+        </div>
+        <div class="guardrail-item">
+          <div class="gi-icon">⚠️</div>
+          <div class="gi-text">Recruitデータ（転職動向・年収）：社内データの外部公開可否を事前確認が必要</div>
+        </div>
+        <div class="guardrail-item">
+          <div class="gi-icon">❓</div>
+          <div class="gi-text">外部監修フローの整備：現在一部記事のみ外部専門家監修あり。Q&A・体験談は体制設計必要</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="guardrail-card">
+      <div class="guardrail-head">✅ 要確認事項</div>
+      <div class="guardrail-body">
+        <div class="guardrail-item">
+          <div class="gi-icon">❓</div>
+          <div class="gi-text"><strong>RNNコンテンツ移行</strong>：移行対象記事・Q&Aの棚卸し・選定基準の合意（4月）</div>
+        </div>
+        <div class="guardrail-item">
+          <div class="gi-icon">❓</div>
+          <div class="gi-text"><strong>RDS企業記事の再編集方針</strong>：初期100本の選定・再編集ルールの確定</div>
+        </div>
+        <div class="guardrail-item">
+          <div class="gi-icon">❓</div>
+          <div class="gi-text"><strong>Recruitデータ公開スコープ</strong>：転職動向・年収データの外部公開許可範囲を社内確認</div>
+        </div>
+        <div class="guardrail-item">
+          <div class="gi-icon">❓</div>
+          <div class="gi-text"><strong>グッドポイント診断連携</strong>：RNNへの案内 or データ移行後登録か、方針確定が必要</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 5. KPI ====== -->
+<section id="kpi">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <h2 class="section-title">KPI設計フレームワーク</h2>
+  </div>
+  <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">目標値は4月の詳細設計フェーズで確定。以下は計測指標と計測開始時期のフレームワーク。</p>
+
+  <table class="kpi-table">
+    <thead>
+      <tr>
+        <th style="width:16%">コンテンツ分類</th>
+        <th style="width:20%">主KPI</th>
+        <th style="width:20%">副次KPI</th>
+        <th style="width:16%">目標値確定</th>
+        <th>計測開始</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>企業特集</strong></td>
+        <td><div class="kpi-primary">PV・応募CTA率</div><div class="kpi-sub">利用率向上の直接指標</div></td>
+        <td>登録率（流入→登録）</td>
+        <td><span class="timing-chip">4月に設定</span></td>
+        <td>6月公開後</td>
+      </tr>
+      <tr>
+        <td><strong>転職体験談</strong></td>
+        <td><div class="kpi-primary">PV・登録CTA転換率</div><div class="kpi-sub">登録モチベーション測定</div></td>
+        <td>回遊率・直帰率</td>
+        <td><span class="timing-chip">4月に設定</span></td>
+        <td>6月公開後</td>
+      </tr>
+      <tr>
+        <td><strong>Q&A</strong></td>
+        <td><div class="kpi-primary">自然検索流入数</div><div class="kpi-sub">長尾SEOの効果測定</div></td>
+        <td>直帰率・回遊先</td>
+        <td><span class="timing-chip">4月に設定</span></td>
+        <td>6月公開後</td>
+      </tr>
+      <tr>
+        <td><strong>ノウハウ記事</strong></td>
+        <td><div class="kpi-primary">自然検索流入数</div><div class="kpi-sub">既存記事との比較</div></td>
+        <td>滞在時間・回遊先</td>
+        <td><span class="timing-chip">4月に設定</span></td>
+        <td>7月拡充後</td>
+      </tr>
+      <tr>
+        <td><strong>年収データ</strong></td>
+        <td><div class="kpi-primary">PV・登録CTA転換率</div><div class="kpi-sub">年収不満層の獲得</div></td>
+        <td>検索順位・CVR</td>
+        <td><span class="timing-chip">4月に設定</span></td>
+        <td>7月公開後</td>
+      </tr>
+      <tr>
+        <td><strong>診断ページ</strong></td>
+        <td><div class="kpi-primary">診断実施率・登録転換率</div></td>
+        <td>直帰率</td>
+        <td><span class="timing-chip">4月に設定</span></td>
+        <td>10月公開後</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="background:var(--navy);color:white;border-radius:8px;padding:20px 24px;margin-top:20px;font-size:13px;">
+    <div style="font-weight:700;margin-bottom:10px;">📊 9月末 一次評価軸</div>
+    <div style="opacity:0.85;line-height:1.9;">コンテンツ分類ごとにKPI目標値（4月設定）に対して達成度を評価 → 達成度・未達要因の整理 → Ph.2コンテンツ優先度・本数計画の見直し → 来期予算・体制方針の決定</div>
+  </div>
+</section>
+
+<!-- ====== 6. ROADMAP ====== -->
+<section id="roadmap">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <h2 class="section-title">ロードマップ</h2>
+  </div>
+
+  <div class="roadmap-phases">
+
+    <!-- Ph.0-1 -->
+    <div class="roadmap-phase">
+      <div class="phase-header" onclick="togglePhase(this)">
+        <div class="phase-title-group">
+          <span class="phase-badge ph0">Ph.0-1</span>
+          <span class="phase-period">大方針確定フェーズ</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <span style="font-size:12px;color:var(--gray-500);">〜 3月末</span>
+          <span class="phase-toggle open">▾</span>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="month-rows">
+          <div class="month-row">
+            <div class="month-label">3月末</div>
+            <div class="month-items">
+              <div class="month-item milestone">
+                <span class="item-icon">◆</span>
+                <span>社内承認：ASIS分析・TOBE方向性・大方針</span>
+                <span class="action-tag tag-check">マイルストーン</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>A. 戦略：KPI指標の大枠合意・RNN/RDS活用大方針合意・コスト規模感概算</span>
+                <span class="action-tag tag-design">戦略</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>B. サイト：TOBEサイトマップ 大分類レベルで合意</span>
+                <span class="action-tag tag-design">サイト設計</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>C. コンテンツ大方針：何を作るか（種別名・目的）</span>
+                <span class="action-tag tag-content">コンテンツ</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>E. CMS選定：機能・価格からどのCMSを選定するかの大方針・管理範囲の確定</span>
+                <span class="action-tag tag-cms">CMS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ph.0-2 -->
+    <div class="roadmap-phase">
+      <div class="phase-header" onclick="togglePhase(this)">
+        <div class="phase-title-group">
+          <span class="phase-badge ph0">Ph.0-2</span>
+          <span class="phase-period">詳細設計フェーズ</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <span style="font-size:12px;color:var(--gray-500);">4月 〜 4月末承認</span>
+          <span class="phase-toggle open">▾</span>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="month-rows">
+          <div class="month-row">
+            <div class="month-label">4月</div>
+            <div class="month-items">
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>A. 戦略具体化：KPI計測箇所・ツール・目標値の確定、コスト詳細見積もり・予算申請額確定</span>
+                <span class="action-tag tag-design">戦略</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>A. 資産選定：RNN移行コンテンツ選定リスト、RDS企業記事 初期100本・月10本計画確定</span>
+                <span class="action-tag tag-content">コンテンツ</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>A. 体験談本数試算：競合（doda・マイナビ等）の掲載本数調査 → 初期30本・月5本ペースの妥当性検証</span>
+                <span class="action-tag tag-interview">調査</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>B. サイト設計詳細：TOBEサイトマップ詳細確定・URL設計・IA・CTA設計</span>
+                <span class="action-tag tag-design">サイト設計</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>C. コンテンツ設計：種別定義・型・構成要素・品質基準・監修ルール・効果測定設計（コンテンツ別KPI目標値）</span>
+                <span class="action-tag tag-content">コンテンツ</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>D. 運用設計：制作体制・役割分担・制作フロー・更新サイクル・効果測定フロー</span>
+                <span class="action-tag tag-design">運用</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>E. 技術・CMS：microCMS選定・要件定義・テンプレート設計・データ移行設計（RNN/RDS）</span>
+                <span class="action-tag tag-cms">CMS</span>
+              </div>
+              <div class="month-item milestone">
+                <span class="item-icon">◆</span>
+                <span>4月末：詳細設計 社内承認・制作着手GoSign</span>
+                <span class="action-tag tag-check">マイルストーン</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ph.1 -->
+    <div class="roadmap-phase">
+      <div class="phase-header" onclick="togglePhase(this)">
+        <div class="phase-title-group">
+          <span class="phase-badge ph1">Ph.1</span>
+          <span class="phase-period">既存資産活用 ＋ 取材並走フェーズ</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <span style="font-size:12px;color:var(--gray-500);">5月 〜 9月末</span>
+          <span class="phase-toggle open">▾</span>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-note">※ 移行・再編集で作れるものを先行。取材不要でスピード公開。取材系（体験談・企業新規）は並走で準備開始。</div>
+        <div class="month-rows">
+          <div class="month-row">
+            <div class="month-label">5月</div>
+            <div class="month-items">
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>CMS導入・環境構築・テンプレート実装</span>
+                <span class="action-tag tag-cms">CMS</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>RNN・RDS 移行コンテンツ入稿開始</span>
+                <span class="action-tag tag-content">コンテンツ</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>転職体験談 取材開始（30本分・6月公開向け先行）</span>
+                <span class="action-tag tag-interview">取材</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>RDS企業記事 継続取材（月10本ペース 既存フロー継続）</span>
+                <span class="action-tag tag-interview">取材</span>
+              </div>
+            </div>
+          </div>
+          <div class="month-row">
+            <div class="month-label">6月</div>
+            <div class="month-items">
+              <div class="month-item milestone">
+                <span class="item-icon">◆</span>
+                <span>/company/ 企業特集 公開（RDS流用 100本）</span>
+                <span class="action-tag tag-content">RDS流用</span>
+              </div>
+              <div class="month-item milestone">
+                <span class="item-icon">◆</span>
+                <span>/story/ 転職体験談 公開（初期 30本min）</span>
+                <span class="action-tag tag-interview">新規取材</span>
+              </div>
+              <div class="month-item milestone">
+                <span class="item-icon">◆</span>
+                <span>/guide/qa/ Q&A 公開（RNN移行 50本）</span>
+                <span class="action-tag tag-content">RNN移行</span>
+              </div>
+            </div>
+          </div>
+          <div class="month-row">
+            <div class="month-label">7月</div>
+            <div class="month-items">
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>/data/salary/ 年収データページ 公開</span>
+                <span class="action-tag tag-data">データ</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>/guide/interview/ 面接対策ページ 公開（既存ガイド再構成＋移行）</span>
+                <span class="action-tag tag-content">コンテンツ</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>企業特集 追加公開（+10本 RDS継続取材分）</span>
+                <span class="action-tag tag-interview">取材</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>転職体験談 追加公開（+5本）</span>
+                <span class="action-tag tag-interview">取材</span>
+              </div>
+            </div>
+          </div>
+          <div class="month-row">
+            <div class="month-label">8月</div>
+            <div class="month-items">
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>/data/trend/ 転職動向レポート 公開</span>
+                <span class="action-tag tag-data">データ</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>業種特化ページ拡充（+3業種：営業・金融・医療）</span>
+                <span class="action-tag tag-content">コンテンツ</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>Q&A 100本達成（追加制作分）</span>
+                <span class="action-tag tag-content">コンテンツ</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>企業特集・体験談 追加公開継続</span>
+                <span class="action-tag tag-interview">取材</span>
+              </div>
+              <div class="month-item milestone">
+                <span class="item-icon">◆</span>
+                <span>8月末 中間確認：コンテンツ分類別KPI 初期データ確認 → 9月評価・来期方針決定に向けた準備</span>
+                <span class="action-tag tag-check">中間確認</span>
+              </div>
+            </div>
+          </div>
+          <div class="month-row">
+            <div class="month-label">9月末</div>
+            <div class="month-items">
+              <div class="month-item milestone">
+                <span class="item-icon">◆</span>
+                <span>一次評価・来期方針決定：分類別KPI達成度評価 → Ph.2優先度・本数計画見直し → 来期予算・体制方針決定</span>
+                <span class="action-tag tag-check">マイルストーン</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ph.2 -->
+    <div class="roadmap-phase">
+      <div class="phase-header" onclick="togglePhase(this)">
+        <div class="phase-title-group">
+          <span class="phase-badge ph2">Ph.2</span>
+          <span class="phase-period">拡充・最適化フェーズ</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <span style="font-size:12px;color:var(--gray-500);">10月 〜 2027年3月</span>
+          <span class="phase-toggle">▾</span>
+        </div>
+      </div>
+      <div class="phase-body" style="display:none;">
+        <div class="phase-note">※ 9月評価を踏まえて優先度を確定してから動く。準備はPh.1中盤（8月〜）から並走。</div>
+        <div class="month-rows">
+          <div class="month-row">
+            <div class="month-label">10〜12月</div>
+            <div class="month-items">
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>/story/ 転職体験談 初期公開（10本）</span>
+                <span class="action-tag tag-interview">取材</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>/company/ 企業特集 新規取材分 追加公開</span>
+                <span class="action-tag tag-interview">取材</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>/diagnosis/ 診断ページ 公開</span>
+                <span class="action-tag tag-content">コンテンツ</span>
+              </div>
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>効果の低いコンテンツのリライト・品質改善</span>
+                <span class="action-tag tag-content">改善</span>
+              </div>
+            </div>
+          </div>
+          <div class="month-row">
+            <div class="month-label">2027年1〜3月</div>
+            <div class="month-items">
+              <div class="month-item">
+                <span class="item-icon">●</span>
+                <span>SEO改善・CTA改善・A/Bテスト</span>
+                <span class="action-tag tag-check">最適化</span>
+              </div>
+              <div class="month-item milestone">
+                <span class="item-icon">◆</span>
+                <span>Ph.2 総括・翌期計画策定</span>
+                <span class="action-tag tag-check">マイルストーン</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ph.3 -->
+    <div class="roadmap-phase">
+      <div class="phase-header" onclick="togglePhase(this)">
+        <div class="phase-title-group">
+          <span class="phase-badge ph3">Ph.3</span>
+          <span class="phase-period">継続改善フェーズ</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <span style="font-size:12px;color:var(--gray-500);">2027年4月〜</span>
+          <span class="phase-toggle">▾</span>
+        </div>
+      </div>
+      <div class="phase-body" style="display:none;">
+        <div class="month-rows">
+          <div class="month-row">
+            <div class="month-label">継続</div>
+            <div class="month-items">
+              <div class="month-item"><span class="item-icon">●</span><span>KPIサイクル運用（測定→改善の定常化）</span></div>
+              <div class="month-item"><span class="item-icon">●</span><span>コンテンツ優先順位の継続見直し</span></div>
+              <div class="month-item"><span class="item-icon">●</span><span>体験談・企業特集の継続拡張</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====== APPENDIX ====== -->
+<section id="appendix">
+  <div class="section-header">
+    <div class="section-num appendix">APX</div>
+    <h2 class="section-title">APPENDIX：調査データ</h2>
+  </div>
+
+  <!-- A1: 競合比較 -->
+  <div class="appendix-section">
+    <div class="appendix-title">A1. 競合比較調査（doda基準）</div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">dodaをベンチマーク基準とした定性的なサイトマップ・コンテンツギャップ分析。</p>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th style="width:22%">指標・機能</th>
+          <th class="rag-col" style="width:29%">r-agent.com（RAG）</th>
+          <th class="doda-col" style="width:29%">doda（ベンチマーク）</th>
+          <th style="width:20%">ギャップ評価</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="metric-name">企業特集・紹介記事</td>
+          <td>❌ なし</td>
+          <td>✅ 多数掲載（業種・規模別）</td>
+          <td><span class="gap-tag gap-big">要対応</span>　利用率直結</td>
+        </tr>
+        <tr>
+          <td class="metric-name">転職体験談・成功事例</td>
+          <td>❌ なし</td>
+          <td>✅ 業種・年代別で多数</td>
+          <td><span class="gap-tag gap-big">要対応</span>　SEO×動機付け</td>
+        </tr>
+        <tr>
+          <td class="metric-name">Q&A形式コンテンツ</td>
+          <td>❌ なし（ノウハウ混在）</td>
+          <td>✅ カテゴリ別Q&A 充実</td>
+          <td><span class="gap-tag gap-big">要対応</span>　長尾SEO</td>
+        </tr>
+        <tr>
+          <td class="metric-name">年収・給与データ</td>
+          <td>⚠️ 部分的（/service/data/）</td>
+          <td>✅ 業種・職種・地域別で充実</td>
+          <td><span class="gap-tag gap-med">改善要</span></td>
+        </tr>
+        <tr>
+          <td class="metric-name">診断・適性チェック</td>
+          <td>❌ なし</td>
+          <td>✅ 複数診断ツール提供</td>
+          <td><span class="gap-tag gap-med">中期対応</span></td>
+        </tr>
+        <tr>
+          <td class="metric-name">面接対策コンテンツ</td>
+          <td>⚠️ 一部あり（/guide/配下）</td>
+          <td>✅ 体系的・充実</td>
+          <td><span class="gap-tag gap-med">拡充要</span></td>
+        </tr>
+        <tr>
+          <td class="metric-name">業種特化ランディングページ</td>
+          <td>⚠️ 3業種のみ</td>
+          <td>✅ 主要業種を網羅</td>
+          <td><span class="gap-tag gap-med">拡充要</span></td>
+        </tr>
+        <tr>
+          <td class="metric-name">登録前ツール（価値証明）</td>
+          <td>❌ なし</td>
+          <td>✅ 登録前に価値体験可能</td>
+          <td><span class="gap-tag gap-big">要対応</span>　登録率改善</td>
+        </tr>
+        <tr>
+          <td class="metric-name">ノウハウ記事数</td>
+          <td>⚠️ あり（/guide/）更新停滞気味</td>
+          <td>✅ 定期更新・量も多い</td>
+          <td><span class="gap-tag gap-med">CMS化で改善</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- A2: コンテンツ本数比較 -->
+  <div class="appendix-section">
+    <div class="appendix-title">A2. コンテンツ本数の定量比較（概算）</div>
+    <div class="count-comparison">
+      <div class="count-card">
+        <div class="content-name">企業特集</div>
+        <div class="count-comparison-row">
+          <div class="count-bar"><div class="count-num count-rag">0本</div><div class="count-site">RAG</div></div>
+          <div class="count-arrow">→</div>
+          <div class="count-bar"><div class="count-num count-doda">多数</div><div class="count-site">doda</div></div>
+        </div>
+        <div style="font-size:11px;color:var(--red);margin-top:8px;">RDSで即時100本確保可</div>
+      </div>
+      <div class="count-card">
+        <div class="content-name">転職体験談</div>
+        <div class="count-comparison-row">
+          <div class="count-bar"><div class="count-num count-rag">0本</div><div class="count-site">RAG</div></div>
+          <div class="count-arrow">→</div>
+          <div class="count-bar"><div class="count-num count-doda">多数</div><div class="count-site">doda</div></div>
+        </div>
+        <div style="font-size:11px;color:var(--orange);margin-top:8px;">初期30本・月5本ペース要試算</div>
+      </div>
+      <div class="count-card">
+        <div class="content-name">Q&A記事</div>
+        <div class="count-comparison-row">
+          <div class="count-bar"><div class="count-num count-rag">0本</div><div class="count-site">RAG</div></div>
+          <div class="count-arrow">→</div>
+          <div class="count-bar"><div class="count-num count-doda">多数</div><div class="count-site">doda</div></div>
+        </div>
+        <div style="font-size:11px;color:var(--green);margin-top:8px;">RNN移行で初期70本確保可</div>
+      </div>
+      <div class="count-card">
+        <div class="content-name">業種特化LP</div>
+        <div class="count-comparison-row">
+          <div class="count-bar"><div class="count-num count-rag">3業種</div><div class="count-site">RAG</div></div>
+          <div class="count-arrow">→</div>
+          <div class="count-bar"><div class="count-num count-doda">網羅</div><div class="count-site">doda</div></div>
+        </div>
+        <div style="font-size:11px;color:var(--orange);margin-top:8px;">+3業種（営業・金融・医療）を追加</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- A3: SEO課題 -->
+  <div class="appendix-section">
+    <div class="appendix-title">A3. SEO観点のASIS課題整理</div>
+    <div class="seo-issues">
+      <div class="seo-issue">
+        <span class="seo-severity sev-high">深刻</span>
+        <span>コンテンツ記事が圧倒的に不足（企業特集・体験談・Q&Aがゼロ）。長尾SEOで勝てる構造になっていない</span>
+      </div>
+      <div class="seo-issue">
+        <span class="seo-severity sev-high">深刻</span>
+        <span>エンジニア依存の更新フロー（CMS未整備）により記事追加・更新スピードが大幅制約。月数十本規模の更新が現実的に不可能</span>
+      </div>
+      <div class="seo-issue">
+        <span class="seo-severity sev-high">深刻</span>
+        <span>E-E-A-T（経験・専門性・権威性・信頼性）の弱さ。専門家監修・体験談・実績データが乏しく、転職サイトとしての信頼性担保が不十分</span>
+      </div>
+      <div class="seo-issue">
+        <span class="seo-severity sev-med">要改善</span>
+        <span>データ系コンテンツの散在：/service/data/ と /data/market/ でURL構造が不統一。内部リンクの最適化が困難</span>
+      </div>
+      <div class="seo-issue">
+        <span class="seo-severity sev-med">要改善</span>
+        <span>タグページの乱立（/guide/tag/ポートフォリオ/等）。ポリシーなしで増加するとクロール効率が低下する懸念</span>
+      </div>
+      <div class="seo-issue">
+        <span class="seo-severity sev-low">軽微</span>
+        <span>業種特化ページが3業種のみ。求人数の多い営業・金融・医療・製薬等のSEO需要に対応できていない</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- A4: CMS比較 -->
+  <div class="appendix-section">
+    <div class="appendix-title">A4. CMS選定比較（RAGサイトへの適合性評価）</div>
+    <div class="cms-comp-wrap">
+      <table class="cms-table">
+        <thead>
+          <tr>
+            <th style="width:24%;text-align:left;">評価項目</th>
+            <th class="rec" style="width:25%;">microCMS（推奨）</th>
+            <th class="alt1" style="width:25%;">WordPress</th>
+            <th class="alt2" style="width:25%;">Contentful</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>日本語対応</td>
+            <td><span class="ok">◎</span> ネイティブ日本語</td>
+            <td><span class="good">○</span></td>
+            <td><span class="bad">△</span> 英語中心</td>
+          </tr>
+          <tr>
+            <td>非エンジニアの操作性</td>
+            <td><span class="ok">◎</span> 直感的UI</td>
+            <td><span class="good">○</span></td>
+            <td><span class="bad">△</span> 学習コスト高</td>
+          </tr>
+          <tr>
+            <td>Next.jsとの親和性</td>
+            <td><span class="ok">◎</span></td>
+            <td><span class="bad">△</span> ヘッドレス化複雑</td>
+            <td><span class="good">○</span></td>
+          </tr>
+          <tr>
+            <td>既存サイトへの部分導入</td>
+            <td><span class="ok">◎</span> コンテンツ単位で後付け可</td>
+            <td><span class="bad">△</span> 全体置換が基本</td>
+            <td><span class="good">○</span></td>
+          </tr>
+          <tr>
+            <td>セキュリティ</td>
+            <td><span class="ok">◎</span> APIベース・攻撃面少</td>
+            <td><span class="bad">△</span> プラグイン脆弱性リスク</td>
+            <td><span class="ok">◎</span></td>
+          </tr>
+          <tr>
+            <td>料金</td>
+            <td><span class="good">○</span> 月額4,900円〜</td>
+            <td><span class="good">○</span> 無料〜（サーバー代別）</td>
+            <td><span class="bad">△</span> 高め</td>
+          </tr>
+          <tr>
+            <td>導入・運用コスト</td>
+            <td><span class="ok">◎</span> 低い</td>
+            <td><span class="bad">△</span> 初期構築・保守に工数</td>
+            <td><span class="bad">△</span> 高い</td>
+          </tr>
+          <tr>
+            <td>国内実績</td>
+            <td><span class="ok">◎</span> 12,000社以上・継続率99%<br><small style="color:var(--gray-500);">ABEMA・SmartHR等</small></td>
+            <td><span class="ok">◎</span></td>
+            <td><span class="bad">△</span> グローバル寄り</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:14px;padding:14px 18px;background:var(--green-light);border:1px solid var(--green);border-radius:6px;font-size:13px;color:var(--green);">
+      <strong>結論：microCMS推奨</strong> ─ 既存Next.jsサイトを全面作り直さず、<strong>記事・ガイド・企業特集のコンテンツ部分だけをCMS化できる</strong>ことが最大の優位性。スモールスタートかつリスクの低い導入が可能。
+    </div>
+  </div>
+
+  <!-- A5: CS needs -->
+  <div class="appendix-section">
+    <div class="appendix-title">A5. CSニーズ合致度分析（フェーズ別・コンテンツ優先評価）</div>
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>CSフェーズ</th>
+          <th>ユーザーニーズ</th>
+          <th>現在のASIS対応</th>
+          <th>TOBEでの対応</th>
+          <th>優先度</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>未検討層</strong></td>
+          <td>「転職すべきか」の情報収集・年収市場価値確認</td>
+          <td>❌ コンテンツなし</td>
+          <td>/data/salary/ 年収データ・/story/ 体験談</td>
+          <td><span class="gap-tag gap-big">高</span></td>
+        </tr>
+        <tr>
+          <td><strong>検討中層</strong>（登録前）</td>
+          <td>サービス理解・登録の理由・メリット確認</td>
+          <td>⚠️ /service/ のみ</td>
+          <td>/diagnosis/ 診断・体験談・企業特集</td>
+          <td><span class="gap-tag gap-big">高</span></td>
+        </tr>
+        <tr>
+          <td><strong>活動中層</strong>（登録後）</td>
+          <td>「どの企業に応募するか」情報・面接対策</td>
+          <td>❌ 企業特集なし・面接ガイド不十分</td>
+          <td>/company/ 企業特集・/guide/interview/ 面接対策</td>
+          <td><span class="gap-tag gap-big">最高</span>　利用率直結</td>
+        </tr>
+        <tr>
+          <td><strong>内定・退職準備層</strong></td>
+          <td>オファー交渉・退職手続き・入社準備</td>
+          <td>⚠️ /guide/offer/ 一部あり</td>
+          <td>既存ガイド拡充・Q&A追加</td>
+          <td><span class="gap-tag gap-med">中</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>
+
+</div><!-- /content-wrap -->
+
+<script>
+function togglePhase(header) {
+  const body = header.nextElementSibling;
+  const toggle = header.querySelector('.phase-toggle');
+  if (body.style.display === 'none') {
+    body.style.display = 'block';
+    toggle.classList.add('open');
+  } else {
+    body.style.display = 'none';
+    toggle.classList.remove('open');
+  }
+}
+
+function scrollToSection(id) {
+  const target = document.getElementById(id);
+  const navHeight = document.querySelector('.sticky-nav').offsetHeight;
+  if (target) {
+    const top = target.getBoundingClientRect().top + window.scrollY - navHeight;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+}
+
+// Nav smooth scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+const navHeight = document.querySelector('.sticky-nav').offsetHeight;
+
+// Active nav on scroll
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - navHeight - 8) current = s.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    const fn = link.getAttribute('onclick') || '';
+    const match = fn.match(/'([^']+)'/);
+    if (match && match[1] === current) link.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

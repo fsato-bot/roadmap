@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コンテンツ種別 × 競合量マップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #c8102e;
+    --red-light: #fdf0f2;
+    --navy: #1a1a2e;
+    --gray-100: #f8f8f8;
+    --gray-200: #efefef;
+    --gray-300: #e0e0e0;
+    --gray-500: #888;
+    --gray-700: #444;
+    --text: #1a1a1a;
+    --white: #ffffff;
+    --green: #0a7c42;
+    --green-light: #f0faf5;
+    --orange: #e67e22;
+    --orange-light: #fdf6ee;
+    --blue: #1a6bbd;
+    --blue-light: #f0f5fd;
+    --purple: #7b3fa0;
+    --purple-light: #f5f0fa;
+  }
+
+  html { scroll-behavior: smooth; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--text);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .doc-header {
+    background: var(--navy);
+    color: white;
+    padding: 40px 60px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .doc-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--red);
+  }
+  .doc-header .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 10px;
+  }
+  .doc-header h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    margin-bottom: 10px;
+  }
+  .doc-header .meta { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+  .page-body {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  /* ===== LEGEND ===== */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--gray-700);
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ===== BAR CHART ===== */
+  .chart-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 48px;
+  }
+
+  .chart-row {
+    display: grid;
+    grid-template-columns: 148px 1fr 180px;
+    align-items: center;
+    gap: 16px;
+    background: var(--gray-100);
+    border-radius: 8px;
+    padding: 14px 20px;
+    border-left: 4px solid transparent;
+  }
+  .chart-row:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .chart-row.level-high   { border-color: var(--red); }
+  .chart-row.level-mid    { border-color: var(--orange); }
+  .chart-row.level-low    { border-color: var(--green); }
+  .chart-row.level-single { border-color: var(--blue); }
+
+  .chart-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .chart-label .tag {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 10px;
+    font-weight: 400;
+    padding: 1px 7px;
+    border-radius: 20px;
+    background: var(--gray-200);
+    color: var(--gray-500);
+  }
+
+  .bar-wrap {
+    background: var(--gray-200);
+    border-radius: 4px;
+    height: 14px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+  .bar-fill.high   { background: linear-gradient(90deg, #c8102e, #e85070); }
+  .bar-fill.mid    { background: linear-gradient(90deg, #e67e22, #f5a342); }
+  .bar-fill.low    { background: linear-gradient(90deg, #0a7c42, #1ead62); }
+  .bar-fill.single { background: linear-gradient(90deg, #1a6bbd, #4a9ae0); }
+
+  .chart-meta { text-align: right; }
+  .chart-count {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .chart-count.high   { color: var(--red); }
+  .chart-count.mid    { color: var(--orange); }
+  .chart-count.low    { color: var(--green); }
+  .chart-count.single { color: var(--blue); }
+  .chart-unit { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+  /* ===== BREAKDOWN TABLE ===== */
+  .breakdown-section { margin-bottom: 48px; }
+
+  .breakdown-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .breakdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--gray-100);
+    border-bottom: 1px solid var(--gray-200);
+    cursor: pointer;
+  }
+  .breakdown-header .bh-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .breakdown-title {
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .breakdown-total {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 2px 12px;
+    border-radius: 20px;
+    color: white;
+  }
+  .bt-high   { background: var(--red); }
+  .bt-mid    { background: var(--orange); }
+  .bt-low    { background: var(--green); }
+  .bt-single { background: var(--blue); }
+
+  .breakdown-body {
+    padding: 0;
+  }
+  .breakdown-body table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .breakdown-body th {
+    background: var(--navy);
+    color: white;
+    font-weight: 500;
+    font-size: 11px;
+    padding: 8px 14px;
+    text-align: left;
+    letter-spacing: 0.04em;
+  }
+  .breakdown-body td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: middle;
+  }
+  .breakdown-body tr:last-child td { border-bottom: none; }
+  .breakdown-body tr:hover td { background: var(--gray-100); }
+
+  .company-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 4px;
+    margin-bottom: 2px;
+  }
+  .ct-biz    { background: #dbeafe; color: #1e40af; }
+  .ct-ambi   { background: #d1fae5; color: #065f46; }
+  .ct-assign { background: #ede9fe; color: #5b21b6; }
+  .ct-jac    { background: #fef3c7; color: #92400e; }
+  .ct-ra     { background: #fce7f3; color: #9d174d; }
+
+  .num-cell {
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .num-cell.high   { color: var(--red); }
+  .num-cell.mid    { color: var(--orange); }
+  .num-cell.low    { color: var(--green); }
+  .num-cell.single { color: var(--blue); }
+
+  .mini-bar-wrap {
+    display: inline-block;
+    width: 60px;
+    height: 6px;
+    background: var(--gray-200);
+    border-radius: 3px;
+    vertical-align: middle;
+    overflow: hidden;
+    margin-left: 6px;
+  }
+  .mini-bar-fill { height: 100%; border-radius: 3px; }
+  .mini-bar-fill.high   { background: var(--red); }
+  .mini-bar-fill.mid    { background: var(--orange); }
+  .mini-bar-fill.low    { background: var(--green); }
+  .mini-bar-fill.single { background: var(--blue); }
+
+  /* ===== INSIGHT CARDS ===== */
+  .insights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 640px) { .insights { grid-template-columns: 1fr; } }
+
+  .insight-card {
+    border-radius: 10px;
+    padding: 18px 20px;
+    border-left: 4px solid transparent;
+  }
+  .insight-card.red    { background: var(--red-light);    border-color: var(--red); }
+  .insight-card.orange { background: var(--orange-light); border-color: var(--orange); }
+  .insight-card.green  { background: var(--green-light);  border-color: var(--green); }
+  .insight-card.blue   { background: var(--blue-light);   border-color: var(--blue); }
+  .insight-card.purple { background: var(--purple-light); border-color: var(--purple); }
+
+  .insight-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 7px;
+  }
+  .insight-card.red    .insight-title { color: var(--red); }
+  .insight-card.orange .insight-title { color: var(--orange); }
+  .insight-card.green  .insight-title { color: var(--green); }
+  .insight-card.blue   .insight-title { color: var(--blue); }
+  .insight-card.purple .insight-title { color: var(--purple); }
+
+  .insight-text {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  /* ===== NOTE ===== */
+  .note {
+    background: #fffbee;
+    border: 1px solid #f0d070;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 12px;
+    color: #7a5c00;
+    line-height: 1.8;
+  }
+  .note strong { font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="eyebrow">Content Strategy — Competitive Research</div>
+  <h1>コンテンツ種別 × 競合量マップ</h1>
+  <div class="meta">データソース：転職サービス5社コンテンツ調査レポート（2026年3月19日調査）／ 対象：ビズリーチ・アンビ・ASSIGN・JAC・リクルートエージェント</div>
+</div>
+
+<div class="page-body">
+
+  <!-- ===== BAR CHART OVERVIEW ===== -->
+  <div class="section-title">競合コンテンツ本数サマリー（5社合算）</div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>200本超（競合最多）</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>30〜199本</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>10〜29本</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>1〜9本（競合少）</div>
+  </div>
+
+  <div class="chart-grid">
+
+    <div class="chart-row level-high">
+      <div class="chart-label">
+        体験談・成功事例
+        <br><span class="tag">転職体験談・キャリアストーリー</span>
+      </div>
+      <div>
+        <div class="bar-wrap"><div class="bar-fill high" style="width:100%"></div></div>
+      </div>
+      <div class="chart-meta">
+        <div class="chart-count high">200本以上</div>
+        <div class="chart-unit">ビズリーチだけで159本+</div>
+      </div>
+    </div>
+
+    <div class="chart-row level-high">
+      <div class="chart-label">
+        ノウハウ記事
+        <br><span class="tag">転職ハウツー・Tips・コラム</span>
+      </div>
+      <div>
+        <div class="bar-wrap"><div class="bar-fill high" style="width:90%"></div></div>
+      </div>
+      <div class="chart-meta">
+        <div class="chart-count high">200本以上</div>
+        <div class="chart-unit">ビズリーチ+アンビで毎日更新</div>
+      </div>
+    </div>
+
+    <div class="chart-row level-mid">
+      <div class="chart-label">
+        企業特集・インタビュー
+        <br><span class="tag">企業連載・採用インタビュー</span>
+      </div>
+      <div>
+        <div class="bar-wrap"><div class="bar-fill mid" style="width:45%"></div></div>
+      </div>
+      <div class="chart-meta">
+        <div class="chart-count mid">80〜100本</div>
+        <div class="chart-unit">アンビ中心、JAC 27社確認</div>
+      </div>
+    </div>
+
+    <div class="chart-row level-low">
+      <div class="chart-label">
+        年収・市場データ
+        <br><span class="tag">年収データ・業界動向レポート</span>
+      </div>
+      <div>
+        <div class="bar-wrap"><div class="bar-fill low" style="width:15%"></div></div>
+      </div>
+      <div class="chart-meta">
+        <div class="chart-count low">30〜40本</div>
+        <div class="chart-unit">JACが21業界+11カ国で突出</div>
+      </div>
+    </div>
+
+    <div class="chart-row level-low">
+      <div class="chart-label">
+        転職Q&amp;A
+        <br><span class="tag">Q&amp;A形式・職種別FAQ</span>
+      </div>
+      <div>
+        <div class="bar-wrap"><div class="bar-fill low" style="width:10%"></div></div>
+      </div>
+      <div class="chart-meta">
+        <div class="chart-count low">約14本</div>
+        <div class="chart-unit">JAC 14職種カテゴリのみ確認</div>
+      </div>
+    </div>
+
+    <div class="chart-row level-single">
+      <div class="chart-label">
+        診断ページ
+        <br><span class="tag">キャリア診断・適職診断</span>
+      </div>
+      <div>
+        <div class="bar-wrap"><div class="bar-fill single" style="width:3%"></div></div>
+      </div>
+      <div class="chart-meta">
+        <div class="chart-count single">1本</div>
+        <div class="chart-unit">アンビ「ジブン分析」のみ</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== BREAKDOWN BY COMPANY ===== -->
+  <div class="section-title">種別 × 社別の内訳</div>
+  <div class="breakdown-section">
+
+    <!-- 体験談 -->
+    <div class="breakdown-card">
+      <div class="breakdown-header">
+        <div class="bh-left">
+          <div class="breakdown-title">体験談・転職成功事例</div>
+          <span class="breakdown-total bt-high">5社合算 200本以上</span>
+        </div>
+      </div>
+      <div class="breakdown-body">
+        <table>
+          <tr>
+            <th>サービス</th>
+            <th>コンテンツ名</th>
+            <th>本数</th>
+            <th>備考</th>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-biz">ビズリーチ</span></td>
+            <td>みんなの転職体験談（note）</td>
+            <td><span class="num-cell high">68本</span><div class="mini-bar-wrap"><div class="mini-bar-fill high" style="width:100%"></div></div></td>
+            <td>noteマガジン</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-biz">ビズリーチ</span></td>
+            <td>キャリアストーリー（note）</td>
+            <td><span class="num-cell high">54本</span><div class="mini-bar-wrap"><div class="mini-bar-fill high" style="width:79%"></div></div></td>
+            <td>多様なキャリアパス紹介</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-biz">ビズリーチ</span></td>
+            <td>失敗に学ぶ 実録・転職Tips（note）</td>
+            <td><span class="num-cell high">37本</span><div class="mini-bar-wrap"><div class="mini-bar-fill high" style="width:54%"></div></div></td>
+            <td>失敗体験ベース</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-jac">JAC</span></td>
+            <td>転職成功事例（転職前後の年収変化付）</td>
+            <td><span class="num-cell mid">26本以上</span><div class="mini-bar-wrap"><div class="mini-bar-fill mid" style="width:38%"></div></div></td>
+            <td>年収変化データ付</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-ambi">アンビ</span></td>
+            <td>アンビで転職しました</td>
+            <td><span class="num-cell low">9本</span><div class="mini-bar-wrap"><div class="mini-bar-fill low" style="width:13%"></div></div></td>
+            <td>企業連動型体験談</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-ra">リクルートエージェント</span></td>
+            <td>体験談</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">ほぼ0本</span></td>
+            <td>エバーグリーン型のみ・新規なし</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ノウハウ記事 -->
+    <div class="breakdown-card">
+      <div class="breakdown-header">
+        <div class="bh-left">
+          <div class="breakdown-title">ノウハウ記事・転職コラム</div>
+          <span class="breakdown-total bt-high">5社合算 200本以上（直近3ヶ月だけで117本）</span>
+        </div>
+      </div>
+      <div class="breakdown-body">
+        <table>
+          <tr>
+            <th>サービス</th>
+            <th>直近3ヶ月本数</th>
+            <th>更新頻度</th>
+            <th>特徴</th>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-biz">ビズリーチ</span></td>
+            <td><span class="num-cell high">64本</span><div class="mini-bar-wrap"><div class="mini-bar-fill high" style="width:100%"></div></div></td>
+            <td>日次更新</td>
+            <td>業界動向・未経験転職・座談会・BIZワード・Around32など多形式</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-ambi">アンビ</span></td>
+            <td><span class="num-cell high">48本</span><div class="mini-bar-wrap"><div class="mini-bar-fill high" style="width:75%"></div></div></td>
+            <td>ほぼ毎日</td>
+            <td>官公庁・エンタメ等テーマ特集型、メディア色強</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-assign">ASSIGN</span></td>
+            <td><span class="num-cell low">5本</span><div class="mini-bar-wrap"><div class="mini-bar-fill low" style="width:8%"></div></div></td>
+            <td>週1〜2本</td>
+            <td>コンサル特化・深掘り型</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-jac">JAC</span></td>
+            <td><span class="num-cell" style="color:var(--gray-500);">不定期</span></td>
+            <td>不定期</td>
+            <td>職務経歴書サンプル10種、実務支援型</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-ra">リクルートエージェント</span></td>
+            <td><span class="num-cell" style="color:var(--gray-500);">≒0本</span></td>
+            <td>ほぼ更新なし</td>
+            <td>4ステップガイド・志望動機54例文が主。時事系ゼロ</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- 企業特集 -->
+    <div class="breakdown-card">
+      <div class="breakdown-header">
+        <div class="bh-left">
+          <div class="breakdown-title">企業特集・企業インタビュー</div>
+          <span class="breakdown-total bt-mid">5社合算 80〜100本以上</span>
+        </div>
+      </div>
+      <div class="breakdown-body">
+        <table>
+          <tr>
+            <th>サービス</th>
+            <th>コンテンツ名</th>
+            <th>規模感</th>
+            <th>備考</th>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-biz">ビズリーチ</span></td>
+            <td>企業連載 job-feed・キーパーソンインタビュー</td>
+            <td><span class="num-cell mid">多数（連載形式）</span></td>
+            <td>企業の変革ストーリーを連載形式で深掘り</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-ambi">アンビ</span></td>
+            <td>INTERVIEW &amp; REPORT（企業インタビュー）</td>
+            <td><span class="num-cell mid">毎日更新・大量</span></td>
+            <td>官公庁8社、エンタメ11社など特集テーマごとに掲載</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-assign">ASSIGN</span></td>
+            <td>企業インタビュー・コンサルファーム特集</td>
+            <td><span class="num-cell low">週1〜2本ペース</span></td>
+            <td>コンサル業界に特化</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-jac">JAC</span></td>
+            <td>採用企業インタビュー</td>
+            <td><span class="num-cell low">27社</span><div class="mini-bar-wrap"><div class="mini-bar-fill low" style="width:100%"></div></div></td>
+            <td>転職前後の年収変化付で掲載</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-ra">リクルートエージェント</span></td>
+            <td>企業インタビュー</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">0本</span></td>
+            <td>企業魅力訴求コンテンツは不在</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- 年収データ -->
+    <div class="breakdown-card">
+      <div class="breakdown-header">
+        <div class="bh-left">
+          <div class="breakdown-title">年収・業界市場データ</div>
+          <span class="breakdown-total bt-low">5社合算 30〜40本（質はJACが突出）</span>
+        </div>
+      </div>
+      <div class="breakdown-body">
+        <table>
+          <tr>
+            <th>サービス</th>
+            <th>コンテンツ名</th>
+            <th>規模・本数</th>
+            <th>備考</th>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-jac">JAC</span></td>
+            <td>転職市場動向レポート</td>
+            <td><span class="num-cell low">21業界</span><div class="mini-bar-wrap"><div class="mini-bar-fill low" style="width:100%"></div></div></td>
+            <td>業種別・職種別の市場分析</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-jac">JAC</span></td>
+            <td>SALARY GUIDE（グローバル）</td>
+            <td><span class="num-cell low">11カ国</span><div class="mini-bar-wrap"><div class="mini-bar-fill low" style="width:52%"></div></div></td>
+            <td>独自発行レポート、他社にない差別化資産</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-assign">ASSIGN</span></td>
+            <td>コンサル年収解説記事（SEO）</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">複数本</span></td>
+            <td>ファーム別・年次別の年収解説</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-biz">ビズリーチ</span></td>
+            <td>アンケート調査記事（独自データ）</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">複数本</span></td>
+            <td>会員向けアンケート結果をコンテンツ化</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-ra">リクルートエージェント</span></td>
+            <td>年収データ系</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">0本</span></td>
+            <td>独自のデータコンテンツは確認できず</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Q&A -->
+    <div class="breakdown-card">
+      <div class="breakdown-header">
+        <div class="bh-left">
+          <div class="breakdown-title">転職Q&amp;A</div>
+          <span class="breakdown-total bt-low">確認済み：JAC 14カテゴリのみ</span>
+        </div>
+      </div>
+      <div class="breakdown-body">
+        <table>
+          <tr>
+            <th>サービス</th>
+            <th>コンテンツ名</th>
+            <th>規模</th>
+            <th>備考</th>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-jac">JAC</span></td>
+            <td>転職Q&amp;A（職種別カテゴリ）</td>
+            <td><span class="num-cell low">14カテゴリ</span></td>
+            <td>IT・製造・金融など職種別にQ&amp;A整備</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-biz">ビズリーチ</span></td>
+            <td>転職ノウハウ内のQ&amp;A的コンテンツ</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">統合型</span></td>
+            <td>独立したQ&amp;Aページではなくコラム内に混在</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-ambi">アンビ</span></td>
+            <td>Q&amp;A系</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">なし</span></td>
+            <td>企業訴求型のため独立Q&amp;Aなし</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-assign">ASSIGN</span></td>
+            <td>Q&amp;A系</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">なし</span></td>
+            <td>コンサル特化コラムで対応</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-ra">リクルートエージェント</span></td>
+            <td>Q&amp;A系</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">なし</span></td>
+            <td>ノウハウガイド形式で対応</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- 診断 -->
+    <div class="breakdown-card">
+      <div class="breakdown-header">
+        <div class="bh-left">
+          <div class="breakdown-title">診断ページ・インタラクティブツール</div>
+          <span class="breakdown-total bt-single">5社中 アンビ1本のみ</span>
+        </div>
+      </div>
+      <div class="breakdown-body">
+        <table>
+          <tr>
+            <th>サービス</th>
+            <th>コンテンツ名</th>
+            <th>規模</th>
+            <th>備考</th>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-ambi">アンビ</span></td>
+            <td>ジブン分析（キャリア診断）</td>
+            <td><span class="num-cell single">1ツール</span></td>
+            <td>15分程度の設問形式。合格可能性判定と連動</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-biz">ビズリーチ</span></td>
+            <td>診断系ツール</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">なし</span></td>
+            <td>動画コンテンツはあり</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-assign">ASSIGN</span></td>
+            <td>診断系ツール</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">なし</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-jac">JAC</span></td>
+            <td>診断系ツール</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">なし</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="company-tag ct-ra">リクルートエージェント</span></td>
+            <td>診断系ツール</td>
+            <td><span class="num-cell" style="color:var(--gray-500);">なし</span></td>
+            <td>—</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== INSIGHTS ===== -->
+  <div class="section-title">示唆・コンテンツ戦略への示唆</div>
+
+  <div class="insights">
+    <div class="insight-card red">
+      <div class="insight-title">体験談・ノウハウは飽和状態</div>
+      <div class="insight-text">
+        体験談はビズリーチだけで<strong>159本以上</strong>、ノウハウ記事はビズリーチ+アンビ合計で直近3ヶ月<strong>112本</strong>と過飽和。数で追うのは現実的でなく、<strong>一次取材の深さ・RAならではの視点</strong>が不可欠。
+      </div>
+    </div>
+    <div class="insight-card orange">
+      <div class="insight-title">企業特集はアンビが独走</div>
+      <div class="insight-text">
+        アンビがほぼ毎日更新で企業インタビューを大量投下。JACは27社の詳細事例あり。リクルートエージェントは<strong>企業訴求コンテンツがゼロ</strong>で、ここが最大の空白地帯。
+      </div>
+    </div>
+    <div class="insight-card green">
+      <div class="insight-title">診断ツールは競合がほぼゼロ</div>
+      <div class="insight-text">
+        5社中、診断ページを持つのは<strong>アンビ1社のみ</strong>。競合空白地帯であり、RA独自の診断ロジック（求人DBとの連動など）で先行できれば強力な差別化資産になる。
+      </div>
+    </div>
+    <div class="insight-card blue">
+      <div class="insight-title">年収データはJACが圧倒的</div>
+      <div class="insight-text">
+        JAC が21業界 × 11カ国のSALARY GUIDEで独走。ただし対象がミドル〜エグゼクティブ層。<strong>全年代向けの年収データ</strong>はまだ空いており、RAが整備する価値あり。
+      </div>
+    </div>
+    <div class="insight-card purple">
+      <div class="insight-title">Q&Aは競合少・整備余地あり</div>
+      <div class="insight-text">
+        独立したQ&amp;Aページを持つのは<strong>JACの14カテゴリのみ</strong>。ノウハウ記事内に混在している各社に対し、構造化されたQ&amp;Aは検索需要を取りやすく投資効率が高い。
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== NOTE ===== -->
+  <div class="note">
+    <strong>調査概要：</strong>ビズリーチ・アンビ（エン・ジャパン）・ASSIGN MEDIA（アサイン）・JAC Recruitment・リクルートエージェントの公開コンテンツを2026年3月19日時点で目視・ツール調査した実数です。「直近3ヶ月」は2025年12月〜2026年3月を指します。ビズリーチのnote掲載本数はマガジン別の確認数値、アンビ・JACの企業インタビュー本数は確認できたページ数をもとにした概算値を含みます。
+  </div>
+
+</div>
+</body>
+</html>

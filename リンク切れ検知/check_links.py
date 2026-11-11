@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
-"""既知の求人リンクを再リクエストし、切れているものだけ CSV / JSON に出す。
+"""2026-10-19 に取った既知の求人リンクを再リクエストし、切れているものだけ出す。
 
-公開中の企業特集ページには求人 URL が HTML に含まれない。
-新規の切れは WordPress の Broken Link Checker（フィルタ「企業特集_求人リンク」）で拾い、
-このバッチは拾った URL の現状（404 か、301 の先も 404 か）をまとめる。
+週次の収集には使わない。新しい切れの収集は check_rds_links.py と check_rag_links.py が行う。
 """
 
 from __future__ import annotations
